@@ -1,6 +1,30 @@
 #import "SGSecurityChecker.h"
 #import "SGDeveloperOptionsCheck.h"
 #import <Network/Network.h>
+#import "SGRootDetection.h"
+#import "SGMockLocation.h"
+#import "SGMalwareDetected.h"
+#import "SGDeveloperEnabled.h"
+#import "SGAppSignature.h"
+#import "SGAudioCallDetection.h"
+#import "SGChecksumValidation.h"
+#import "SGKeyLoggers.h"
+#import "SGReAuthticateUser.h"
+#import "SGRootClocking.h"
+#import "SGScreenMirroring.h"
+#import "SGScreenRecording.h"
+#import "SGScreenShotPrevention.h"
+#import "SGSpoofingDetected.h"
+#import "SGTapJacked.h"
+#import "SGTimeManipulation.h"
+#import "SGVPNConnection.h"
+#import "SGWifiSecure.h"
+
+
+
+
+
+
 
 @interface SGSecurityChecker ()
 
@@ -156,29 +180,35 @@
         return SGSecurityCheckResultSuccess;
     }
     
+    SGRootDetection *rootDetection = [[SGRootDetection alloc] init];
+       BOOL rootDetected = [rootDetection isRootDetected];
+    
     // Check for jailbreak indicators
     // Implementation will be added
-    return SGSecurityCheckResultSuccess;
+    return rootDetected;
 }
 
 - (SGSecurityCheckResult)checkMockLocation {
     if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    
+    SGMockLocation *mL = [[SGMockLocation alloc] init];
+       BOOL isMockLocation = [mL isMockLocation];
     // Check if location services are enabled and authorized
     // Implementation will be added
-    return SGSecurityCheckResultSuccess;
+    return isMockLocation;
 }
 
 - (SGSecurityCheckResult)checkTimeManipulation {
     if (self.configuration.timeManipulationLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
+    SGTimeManipulation *mL = [[SGTimeManipulation alloc] init];
+       BOOL isTimeManipulated = [mL isTimeManipulation];
     
     // Compare system time with network time
     // Implementation will be added
-    return SGSecurityCheckResultSuccess;
+    return isTimeManipulated;
 }
 
 - (SGSecurityCheckResult)checkUSBDebugging {
@@ -195,30 +225,33 @@
     if (self.configuration.screenSharingLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    
+    SGScreenMirroring *mL = [[SGScreenMirroring alloc] init];
+       BOOL isScreenShare = [mL isScreenMirrored];
     // Check for screen recording or mirroring
     // Implementation will be added
-    return SGSecurityCheckResultSuccess;
+    return isScreenShare;
 }
 
 - (SGSecurityCheckResult)checkSignature {
     if (self.configuration.signatureVerificationLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    
+    SGAppSignature *mL = [[SGAppSignature alloc] init];
+       BOOL appSign = [mL isAppSignatureValid];
     // Verify app signature and integrity
     // Implementation will be added
-    return SGSecurityCheckResultSuccess;
+    return appSign;
 }
 
 - (SGSecurityCheckResult)checkNetworkSecurity {
     if (self.configuration.networkSecurityLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    
+    SGWifiSecure *mL = [[SGWifiSecure alloc] init];
+    BOOL networkConnection = [mL isWifiSecure];
     // Check for VPN, proxy, and insecure networks
     // Implementation will be added
-    return SGSecurityCheckResultSuccess;
+    return networkConnection;
 }
 
 #pragma mark - Network Monitoring
@@ -237,6 +270,18 @@
 }
 
 - (void)cleanup {
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIApplicationUserDidTakeScreenshotNotification
+                                                  object:nil];
+    
+    if (@available(iOS 11.0, *)) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                        name:UIScreenCapturedDidChangeNotification
+                                                      object:nil];
+    } else {
+        // Fallback on earlier versions
+    }
+    
     [self stopNetworkMonitoring];
     [self.alertQueue removeAllObjects];
 }
