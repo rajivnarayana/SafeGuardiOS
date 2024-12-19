@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  SafeGuardiOS: d0873c007bad5f1038fbbe9fc82e4316a51be3c8
+  SafeGuardiOS: 34b080a93bdd376aed7ce95ca410fb00b380500c
 
 PODFILE CHECKSUM: 5f5fe838b87c1f6fd15e42e19acd240d35b1ae8d
 

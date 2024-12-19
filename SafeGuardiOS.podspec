@@ -28,15 +28,18 @@ TODO: Add long description of the pod here.
   s.source           = { :git => 'https://github.com/Rajiv Singaseni/SafeGuardiOS.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '12.0'
 
   s.source_files = 'SafeGuardiOS/Classes/**/*'
+  
+  s.resource_bundles = {'SGSecurityPrivacy' => ['SafeGuardiOS/Resources/PrivacyInfo.xcprivacy']}
   
   # s.resource_bundles = {
   #   'SafeGuardiOS' => ['SafeGuardiOS/Assets/*.png']
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
+  s.ios.frameworks = 'UIKit', 'Foundation'
+  s.requires_arc = true
   # s.dependency 'AFNetworking', '~> 2.3'
 end
