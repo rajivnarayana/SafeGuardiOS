@@ -10,7 +10,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SGScreenRecording : NSObject
-
+@property bool isDetect;
+-(BOOL)isScreenRecorded;
 @end
 
 NS_ASSUME_NONNULL_END

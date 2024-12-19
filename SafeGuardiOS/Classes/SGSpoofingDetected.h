@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SGSpoofingDetected : NSObject
-
+- (BOOL)isSpoofingDetected ;
 @end
 
 NS_ASSUME_NONNULL_END

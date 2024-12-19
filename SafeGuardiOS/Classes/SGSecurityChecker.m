@@ -84,16 +84,16 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             __weak typeof(self) weakSelf = self;
             self.alertHandler(alert[@"title"],
-                            alert[@"message"],
-                            [alert[@"level"] integerValue],
-                            ^(BOOL shouldQuit) {
-                                if (shouldQuit) {
-                                    exit(0);
-                                } else {
-                                    weakSelf.isShowingAlert = NO;
-                                    [weakSelf showNextAlertIfNeeded];
-                                }
-                            });
+                              alert[@"message"],
+                              [alert[@"level"] integerValue],
+                              ^(BOOL shouldQuit) {
+                if (shouldQuit) {
+                    exit(0);
+                } else {
+                    weakSelf.isShowingAlert = NO;
+                    [weakSelf showNextAlertIfNeeded];
+                }
+            });
         });
     }
 }
@@ -107,57 +107,57 @@
         result = [self checkDeveloperOptions];
         if (result != SGSecurityCheckResultSuccess) {
             [self showSecurityAlert:@"Developer Options" 
-                          message:@"Developer options are enabled" 
-                           level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+                            message:@"Developer options are enabled" 
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
         
         result = [self checkRoot];
         if (result != SGSecurityCheckResultSuccess) {
             [self showSecurityAlert:@"Root Access" 
-                          message:@"Device is rooted" 
-                           level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+                            message:@"Device is rooted" 
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
         
         result = [self checkMockLocation];
         if (result != SGSecurityCheckResultSuccess) {
             [self showSecurityAlert:@"Mock Location" 
-                          message:@"Mock location is enabled" 
-                           level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+                            message:@"Mock location is enabled" 
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
         
         result = [self checkTimeManipulation];
         if (result != SGSecurityCheckResultSuccess) {
             [self showSecurityAlert:@"Time Manipulation" 
-                          message:@"Time manipulation is detected" 
-                           level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+                            message:@"Time manipulation is detected" 
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
         
         result = [self checkUSBDebugging];
         if (result != SGSecurityCheckResultSuccess) {
             [self showSecurityAlert:@"USB Debugging" 
-                          message:@"USB debugging is enabled" 
-                           level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+                            message:@"USB debugging is enabled" 
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
         
         result = [self checkScreenSharing];
         if (result != SGSecurityCheckResultSuccess) {
             [self showSecurityAlert:@"Screen Sharing" 
-                          message:@"Screen sharing is enabled" 
-                           level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+                            message:@"Screen sharing is enabled" 
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
         
         result = [self checkSignature];
         if (result != SGSecurityCheckResultSuccess) {
             [self showSecurityAlert:@"Signature Verification" 
-                          message:@"Signature verification failed" 
-                           level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+                            message:@"Signature verification failed" 
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
         
         result = [self checkNetworkSecurity];
         if (result != SGSecurityCheckResultSuccess) {
             [self showSecurityAlert:@"Network Security" 
-                          message:@"Network security check failed" 
-                           level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+                            message:@"Network security check failed" 
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
     });
 }
@@ -167,12 +167,12 @@
         return SGSecurityCheckResultSuccess;
     }
     
-    #if DEBUG
-        return (self.configuration.developerOptionsLevel == SGSecurityLevelError) ? 
-               SGSecurityCheckResultError : SGSecurityCheckResultWarning;
-    #else
-        return SGSecurityCheckResultSuccess;
-    #endif
+#if DEBUG
+    return (self.configuration.developerOptionsLevel == SGSecurityLevelError) ? 
+    SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+#else
+    return SGSecurityCheckResultSuccess;
+#endif
 }
 
 - (SGSecurityCheckResult)checkRoot {
@@ -181,7 +181,7 @@
     }
     
     SGRootDetection *rootDetection = [[SGRootDetection alloc] init];
-       BOOL rootDetected = [rootDetection isRootDetected];
+    BOOL rootDetected = [rootDetection isRootDetected];
     
     // Check for jailbreak indicators
     // Implementation will be added
@@ -193,7 +193,7 @@
         return SGSecurityCheckResultSuccess;
     }
     SGMockLocation *mL = [[SGMockLocation alloc] init];
-       BOOL isMockLocation = [mL isMockLocation];
+    BOOL isMockLocation = [mL isMockLocation];
     // Check if location services are enabled and authorized
     // Implementation will be added
     return isMockLocation;
@@ -204,7 +204,7 @@
         return SGSecurityCheckResultSuccess;
     }
     SGTimeManipulation *mL = [[SGTimeManipulation alloc] init];
-       BOOL isTimeManipulated = [mL isTimeManipulation];
+    BOOL isTimeManipulated = [mL isTimeManipulation];
     
     // Compare system time with network time
     // Implementation will be added
@@ -226,7 +226,7 @@
         return SGSecurityCheckResultSuccess;
     }
     SGScreenMirroring *mL = [[SGScreenMirroring alloc] init];
-       BOOL isScreenShare = [mL isScreenMirrored];
+    BOOL isScreenShare = [mL isScreenMirrored];
     // Check for screen recording or mirroring
     // Implementation will be added
     return isScreenShare;
@@ -237,7 +237,7 @@
         return SGSecurityCheckResultSuccess;
     }
     SGAppSignature *mL = [[SGAppSignature alloc] init];
-       BOOL appSign = [mL isAppSignatureValid];
+    BOOL appSign = [mL isAppSignatureValid];
     // Verify app signature and integrity
     // Implementation will be added
     return appSign;
@@ -264,8 +264,8 @@
     BOOL isVPN = nw_path_uses_interface_type(path, nw_interface_type_other);
     if (isVPN) {
         [self showSecurityAlert:@"Network Security"
-                      message:@"VPN connection detected"
-                       level:self.configuration.networkSecurityLevel];
+                        message:@"VPN connection detected"
+                          level:self.configuration.networkSecurityLevel];
     }
 }
 

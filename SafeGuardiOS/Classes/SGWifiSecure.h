@@ -6,10 +6,12 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import <Network/Network.h>
+#import <SystemConfiguration/CaptiveNetwork.h>
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SGWifiSecure : NSObject
+@property bool isWIFiINSecure;
 -(BOOL)isWifiSecure;
 @end
 

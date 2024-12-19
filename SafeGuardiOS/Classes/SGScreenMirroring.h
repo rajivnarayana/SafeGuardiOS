@@ -10,6 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SGScreenMirroring : NSObject
+@property bool isDetect;
 -(BOOL)isScreenMirrored;
 @end
 
