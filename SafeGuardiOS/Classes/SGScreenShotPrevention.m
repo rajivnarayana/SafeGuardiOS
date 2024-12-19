@@ -11,7 +11,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        
+        _isSSTaken = false;
     }
     return self;
 }
@@ -25,6 +25,7 @@
 }
 
 - (void)didTakeScreenshot:(NSNotification *)notification {
+    _isSSTaken = true;
     // Call your custom method or show an alert here
     // 1. Add Overlay for Screenshot Prevention Message
     [self showScreenshotOverlay];

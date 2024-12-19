@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SGSpoofingDetected : NSObject
 - (BOOL)isSpoofingDetected ;
+@property NSString *bundleID;
 @end
 
 NS_ASSUME_NONNULL_END

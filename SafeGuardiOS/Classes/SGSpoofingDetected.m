@@ -19,7 +19,7 @@
 
 - (BOOL)isSpoofingDetected {
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-    if (![bundleIdentifier isEqualToString:@"com.KFintech.CyberSheildiOS"]) {
+    if (![bundleIdentifier isEqualToString:_bundleID]) {
         NSLog(@"Potential application spoofing detected.");
         return YES;
     }

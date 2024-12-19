@@ -19,8 +19,11 @@
 #import "SGTimeManipulation.h"
 #import "SGVPNConnection.h"
 #import "SGWifiSecure.h"
-
-
+#import "iOSSecuritySuiteObjectiveC/SGJailbreakChecker.h"
+#import "iOSSecuritySuiteObjectiveC/SGDebuggerChecker.h"
+#import "iOSSecuritySuiteObjectiveC/SGEmulatorChecker.h"
+#import "iOSSecuritySuiteObjectiveC/SGReverseEngineeringToolsChecker.h"
+#import "iOSSecuritySuiteObjectiveC/SGNetworkChecker.h"
 
 
 
@@ -161,7 +164,129 @@
                             message:@"Network security check failed" 
                               level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
+        
+        result = [self checkEmulator];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"Emulator Check"
+                            message:@"App running in Virtual device / Simulator"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        
+        result = [self checkProxy];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"Proxy Check"
+                            message:@"Network check, App Running in a Proxy Network "
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        result = [self checkReverseEngineer];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"Reverse Engineer"
+                            message:@"Reverse Engineer Check"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        result = [self checkAudioCall];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"Audio Call Detected"
+                            message:@"Audio Call Detected check"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        result = [self checkMalware];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"Malware Detected"
+                            message:@"Malware Detected check"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        result = [self checkRootClocking];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"Root Clocking Detected"
+                            message:@"Root Clocking Detected check"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        result = [self checkScreenRecording];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"Screen Recording Detected"
+                            message:@"Screen Recording Detected check"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        result = [self checkScreenShotPrevention];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"ScreenShot Detected"
+                            message:@"ScreenShot Detected check"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        result = [self checkSpoofing];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"Spoofing Detected"
+                            message:@"Spoofing Detected check"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        result = [self checkTapJack];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"TapJack Detected"
+                            message:@"TapJack Detected check"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        result = [self checkVpnCheck];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"VpnCheck Detected"
+                            message:@"VpnCheck Detected check"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
+        
     });
+}
+- (SGSecurityCheckResult)checkSpoofing {
+    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    SGSpoofingDetected *mL = [[SGSpoofingDetected alloc] init];
+    mL.bundleID = @"org.cocoapods.demo.SafeGuardiOS-Example";
+    return  [mL isSpoofingDetected];
+}
+
+- (SGSecurityCheckResult)checkTapJack {
+    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    SGTapJacked *mL = [[SGTapJacked alloc] init];
+    return  [mL isTapJackedDevice];
+}
+
+- (SGSecurityCheckResult)checkVpnCheck {
+    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    SGVPNConnection *mL = [[SGVPNConnection alloc] init];
+    return  [mL isVPNConnected];
+}
+
+
+- (SGSecurityCheckResult)checkScreenRecording {
+    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    SGScreenRecording *mL = [[SGScreenRecording alloc] init];
+    return  [mL isScreenRecorded];
+}
+
+- (SGSecurityCheckResult)checkScreenShotPrevention {
+    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    SGScreenShotPrevention *mL = [[SGScreenShotPrevention alloc] init];
+    [mL preventScreenShot];
+    return  [mL isSSTaken];
 }
 
 - (SGSecurityCheckResult)checkDeveloperOptions {
@@ -169,12 +294,37 @@
         return SGSecurityCheckResultSuccess;
     }
     
-#if DEBUG
-    return (self.configuration.developerOptionsLevel == SGSecurityLevelError) ? 
-    SGSecurityCheckResultError : SGSecurityCheckResultWarning;
-#else
-    return SGSecurityCheckResultSuccess;
-#endif
+    SGDeveloperEnabled *mL = [[SGDeveloperEnabled alloc] init];
+    return  [mL isDeveloperEnabled];
+    
+//#if DEBUG
+//    return (self.configuration.developerOptionsLevel == SGSecurityLevelError) ? 
+//    SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+//#else
+//    return SGSecurityCheckResultSuccess;
+//#endif
+}
+- (SGSecurityCheckResult)checkMalware {
+    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    SGMalwareDetected *mL = [[SGMalwareDetected alloc] init];
+    return  [mL malwareDetected];
+}
+
+- (SGSecurityCheckResult)checkRootClocking {
+    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    SGRootClocking *mL = [[SGRootClocking alloc] init];
+    return  [mL isRootClocking];
+}
+- (SGSecurityCheckResult)checkAudioCall {
+    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    SGAudioCallDetection *mL = [[SGAudioCallDetection alloc] init];
+    return  [mL isAudioCallDetected];
 }
 
 - (SGSecurityCheckResult)checkRoot {
@@ -182,9 +332,9 @@
         return SGSecurityCheckResultSuccess;
     }
     
-    SGRootDetection *rootDetection = [[SGRootDetection alloc] init];
-    BOOL rootDetected = [rootDetection isRootDetected];
-    
+//    SGRootDetection *rootDetection = [[SGRootDetection alloc] init];
+//    BOOL rootDetected = [rootDetection isRootDetected];
+    BOOL rootDetected =   [SGJailbreakChecker amIJailbroken];
     // Check for jailbreak indicators
     // Implementation will be added
     return rootDetected;
@@ -196,8 +346,6 @@
     }
     SGMockLocation *mL = [[SGMockLocation alloc] init];
     BOOL isMockLocation = [mL isMockLocation];
-    // Check if location services are enabled and authorized
-    // Implementation will be added
     return isMockLocation;
 }
 
@@ -217,11 +365,36 @@
     if (self.configuration.usbDebuggingLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    
+    BOOL isDebug =   [SGJailbreakChecker amIJailbroken];
     // Check if device is connected to Xcode
     // Implementation will be added
     return SGSecurityCheckResultSuccess;
 }
+
+- (SGSecurityCheckResult)checkEmulator {
+    if (self.configuration.usbDebuggingLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+ 
+    return [SGEmulatorChecker amIRunInEmulator];
+}
+
+- (SGSecurityCheckResult)checkReverseEngineer {
+    if (self.configuration.usbDebuggingLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+ 
+    return [SGReverseEngineeringToolsChecker amIReverseEngineered];
+}
+
+- (SGSecurityCheckResult)checkProxy {
+    if (self.configuration.usbDebuggingLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+ 
+    return [SGNetworkChecker amIProxied];
+}
+
 
 - (SGSecurityCheckResult)checkScreenSharing {
     if (self.configuration.screenSharingLevel == SGSecurityLevelDisable) {

@@ -10,6 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SGScreenShotPrevention : NSObject
+@property BOOL isSSTaken;
 -(void)preventScreenShot;
 @end
 

@@ -8,7 +8,7 @@
 #import "SGWifiSecure.h"
 
 @interface SGWifiSecure ()
-
+@property (nonatomic, strong) NSArray *trustedSSIDs;
 @property (nonatomic, strong) nw_path_monitor_t pathMonitor;
 
 @end
@@ -19,6 +19,7 @@
     if (self) {
         _isWIFiINSecure = NO;
         [self startMonitoringNetwork];
+        self.trustedSSIDs = @[@"HomeWiFi", @"OfficeWiFi"];
     }
     return self;
 }
@@ -62,7 +63,7 @@
     // You can compare SSID with a known list of secured networks, or check for specific conditions.
     // However, iOS does not provide direct access to the security type (open, WEP, WPA) of a network.
     
-    if ([SSID isEqualToString:@"YourSecuredWiFiSSID"]) {
+    if ([self.trustedSSIDs containsObject:SSID]) {
         NSLog(@"This is a secured Wi-Fi network.");
         _isWIFiINSecure = true;
     } else {
