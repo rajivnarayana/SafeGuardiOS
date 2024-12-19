@@ -6,6 +6,7 @@
 //
 
 #import "SGMockLocation.h"
+#import "SGSecurityChecker.h"
 
 @implementation SGMockLocation
 - (instancetype)init {
@@ -70,6 +71,7 @@
             if (distance > 1000) { // Detect large jumps, e.g., > 1000 meters
                 NSLog(@"Possible mock location detected. Large jump in distance.");
                 _isLocationMockked = YES;
+                [[SGSecurityChecker sharedInstance] LocationALert];
             }
         }
         
@@ -82,5 +84,9 @@
         return YES;
     }
     return NO;
+}
+
+-(void)stopMontiring{
+    [self.locationManager stopUpdatingLocation];
 }
 @end

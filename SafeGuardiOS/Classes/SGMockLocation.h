@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property bool isLocationMockked;
 @property CLLocation *lastLocation;
 @property (nonatomic, strong) CLLocationManager *locationManager;
-
+-(void)stopMontiring;
 - (BOOL)isMockLocation ;
 @end
 

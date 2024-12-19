@@ -38,4 +38,6 @@ typedef void(^SGSecurityAlertHandler)(NSString *title, NSString *message, SGSecu
 - (void)stopNetworkMonitoring;
 - (void)cleanup;
 
+-(void)LocationALert;
+
 @end
