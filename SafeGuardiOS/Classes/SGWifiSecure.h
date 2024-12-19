@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SGWifiSecure : NSObject
 @property bool isWIFiINSecure;
 -(BOOL)isWifiSecure;
+
+- (void)stopMonitoring;
 @end
 
 NS_ASSUME_NONNULL_END

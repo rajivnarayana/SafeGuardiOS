@@ -33,6 +33,7 @@
 @property (nonatomic, strong) dispatch_queue_t securityQueue;
 @property (nonatomic, strong) nw_path_monitor_t networkMonitor;
 @property (nonatomic, strong) SGSecurityConfiguration *configuration;
+@property (nonatomic, strong) SGWifiSecure *wifiMonitor;
 
 @end
 
@@ -54,6 +55,7 @@
         _alertQueue = [NSMutableArray new];
         _isShowingAlert = NO;
         _securityQueue = dispatch_queue_create("com.safeguard.securitycheck", DISPATCH_QUEUE_SERIAL);
+        _wifiMonitor = [[SGWifiSecure alloc] init];
     }
     return self;
 }
@@ -285,6 +287,15 @@
     [self stopNetworkMonitoring];
     [self.alertQueue removeAllObjects];
 }
+
+- (void)startNetworkMonitoring {
+    // Do nothing. Automatically
+}
+
+- (void)stopNetworkMonitoring {
+    [_wifiMonitor stopMonitoring];
+}
+
 
 - (void)dealloc {
     [self cleanup];

@@ -97,7 +97,8 @@
 }
 
 + (BOOL)hasBreakpointAt:(const void *)functionAddr functionSize:(vm_size_t)functionSize {
-    return [SGDebuggerChecker hasBreakpointAt:functionAddr functionSize:functionSize];
+    return YES;
+//    return [SGDebuggerChecker hasBreakpointAt:functionAddr functionSize:functionSize];
 }
 #endif
 

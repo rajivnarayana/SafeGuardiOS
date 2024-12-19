@@ -7,6 +7,12 @@
 
 #import "SGWifiSecure.h"
 
+@interface SGWifiSecure ()
+
+@property (nonatomic, strong) nw_path_monitor_t pathMonitor;
+
+@end
+
 @implementation SGWifiSecure
 - (instancetype)init {
     self = [super init];
@@ -20,8 +26,8 @@
 
 - (void)startMonitoringNetwork {
     if (@available(iOS 12.0, *)) {
-        nw_path_monitor_t monitor = nw_path_monitor_create();
-        nw_path_monitor_set_update_handler(monitor, ^(nw_path_t path) {
+        _pathMonitor = nw_path_monitor_create();
+        nw_path_monitor_set_update_handler(_pathMonitor, ^(nw_path_t path) {
             // Check if the device is connected to Wi-Fi
             if (nw_path_is_expensive(path)) {
                 NSLog(@"Using cellular data.");
@@ -30,7 +36,7 @@
                 [self checkWiFiSecurity];
             }
         });
-        nw_path_monitor_start(monitor);
+        nw_path_monitor_start(_pathMonitor);
     } else {
         // Fallback on earlier versions
     }
@@ -63,6 +69,10 @@
         NSLog(@"This Wi-Fi network is either open or not recognized.");
         _isWIFiINSecure = false;
     }
+}
+
+- (void)stopMonitoring {
+    nw_path_monitor_cancel(_pathMonitor);
 }
 
 -(BOOL)isWifiSecure{
