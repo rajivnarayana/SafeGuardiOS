@@ -11,7 +11,7 @@ typedef void(^SGSecurityAlertHandler)(NSString *title, NSString *message, SGSecu
 
 @interface SGSecurityChecker : NSObject
 
-@property (nonatomic, strong, readonly) SGSecurityConfiguration *configuration;
+@property (nonatomic, strong) SGSecurityConfiguration *configuration;
 @property (nonatomic, copy) SGSecurityAlertHandler alertHandler;
 
 + (instancetype)sharedInstance;
@@ -26,12 +26,13 @@ typedef void(^SGSecurityAlertHandler)(NSString *title, NSString *message, SGSecu
 // Individual checks - returns YES if check passed
 - (SGSecurityCheckResult)checkDeveloperOptions;
 - (SGSecurityCheckResult)checkMockLocation;
-- (SGSecurityCheckResult)checkTimeManipulation;
+- (void)checkTimeManipulationWithCompletion:(void(^)(BOOL isSynchronized))completion;
 - (SGSecurityCheckResult)checkUSBDebugging;
 - (SGSecurityCheckResult)checkRoot;
 - (SGSecurityCheckResult)checkScreenSharing;
 - (SGSecurityCheckResult)checkSignature;
 - (SGSecurityCheckResult)checkNetworkSecurity;
+- (SGSecurityCheckResult)checkSpoofing;
 
 // Network monitoring
 - (void)startNetworkMonitoring;

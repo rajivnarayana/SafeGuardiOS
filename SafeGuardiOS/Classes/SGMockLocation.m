@@ -36,7 +36,6 @@
     // Check current authorization status
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
         // Request authorization only if not determined
-        [self.locationManager requestWhenInUseAuthorization];
     } else if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse ||
                [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
         // Start location updates immediately if already authorized

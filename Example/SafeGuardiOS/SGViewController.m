@@ -151,7 +151,7 @@
 }
 
 - (IBAction)checkAppSpoofing:(id)sender {
-    // To be implemented
+    [[SGSecurityChecker sharedInstance] checkSpoofing];
 }
 
 - (IBAction)checkKeyLoggerDetection:(id)sender {

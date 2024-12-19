@@ -14,6 +14,11 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    SGSecurityConfiguration *configuration = [[SGSecurityConfiguration alloc] initWithDefaultConfiguration];
+    configuration.expectedBundleIdentifier = @"org.cocoapods.demo.SafeGuardiOS-Example";
+    configuration.expectedSignature = @"org.cocoapods.demo.SafeGuardiOS-Example";
+    [SGSecurityChecker sharedInstance].configuration = configuration;
+    
     return YES;
 }
 

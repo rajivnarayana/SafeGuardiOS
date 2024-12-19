@@ -3,7 +3,7 @@ use_frameworks!
 platform :ios, '10.0'
 
 target 'SafeGuardiOS_Example' do
-  pod 'SafeGuardiOS', :path => '../'
+  pod 'SafeGuard', :path => '../'
 
   target 'SafeGuardiOS_Tests' do
     inherit! :search_paths

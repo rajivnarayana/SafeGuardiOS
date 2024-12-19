@@ -16,6 +16,8 @@ typedef NS_ENUM(NSInteger, SGSecurityLevel) {
 @property (nonatomic, assign) SGSecurityLevel screenSharingLevel;
 @property (nonatomic, assign) SGSecurityLevel signatureVerificationLevel;
 @property (nonatomic, assign) SGSecurityLevel networkSecurityLevel;
+@property (nonatomic, assign) NSString *expectedBundleIdentifier;
+@property (nonatomic, assign) NSString *expectedSignature;
 
 + (instancetype)defaultConfiguration;
 - (instancetype)initWithDefaultConfiguration;

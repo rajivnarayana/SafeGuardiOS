@@ -17,6 +17,7 @@
 #import "SGSpoofingDetected.h"
 #import "SGTapJacked.h"
 #import "SGTimeManipulation.h"
+#import "SGTimeTamperingDetector.h"
 #import "SGVPNConnection.h"
 #import "SGWifiSecure.h"
 #import "SGChecksumValidation.h"
@@ -36,9 +37,10 @@
 @property (nonatomic, assign) BOOL isShowingAlert;
 @property (nonatomic, strong) dispatch_queue_t securityQueue;
 @property (nonatomic, strong) nw_path_monitor_t networkMonitor;
-@property (nonatomic, strong) SGSecurityConfiguration *configuration;
 @property (nonatomic, strong) SGWifiSecure *wifiMonitor;
 @property (nonatomic, strong) SGMockLocation *locationManager;
+@property (nonatomic, strong) SGTimeTamperingDetector *timeTamperingDetector;
+
 @end
 
 @implementation SGSecurityChecker
@@ -61,6 +63,7 @@
         _securityQueue = dispatch_queue_create("com.safeguard.securitycheck", DISPATCH_QUEUE_SERIAL);
         _wifiMonitor = [[SGWifiSecure alloc] init];
         _locationManager = [[SGMockLocation alloc] init];
+        _timeTamperingDetector = [[SGTimeTamperingDetector alloc] init];
     }
     return self;
 }
@@ -132,12 +135,13 @@
                               level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
         
-        result = [self checkTimeManipulation];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Time Manipulation" 
-                            message:@"Time manipulation is detected" 
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
+        [self checkTimeManipulationWithCompletion:^(BOOL isSynchronized) {
+            if (!isSynchronized) {
+                [self showSecurityAlert:@"Time Manipulation" 
+                                message:@"Time manipulation is detected" 
+                                  level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+            }
+        }];
         
         result = [self checkUSBDebugging];
         if (result != SGSecurityCheckResultSuccess) {
@@ -268,7 +272,7 @@
         return SGSecurityCheckResultSuccess;
     }
     SGSpoofingDetected *mL = [[SGSpoofingDetected alloc] init];
-    mL.bundleID = @"org.cocoapods.demo.SafeGuardiOS-Example";
+    mL.bundleID = self.configuration.expectedBundleIdentifier;
     return  [mL isSpoofingDetected];
 }
 
@@ -357,17 +361,6 @@
     return rootDetected;
 }
 
--(void)LocationALert{
-    SGMockLocation *mL = [[SGMockLocation alloc] init];
-    
-    BOOL result = [mL isMockLocation];
-    if (result) {
-        [self showSecurityAlert:@"Mock Location"
-                        message:@"Mock location is enabled"
-                          level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-    }
-}
-
 - (SGSecurityCheckResult)checkMockLocation {
     if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
@@ -377,26 +370,18 @@
     return isMockLocation;
 }
 
-- (SGSecurityCheckResult)checkTimeManipulation {
+- (void)checkTimeManipulationWithCompletion:(void(^)(BOOL isSynchronized))completion {
     if (self.configuration.timeManipulationLevel == SGSecurityLevelDisable) {
-        return SGSecurityCheckResultSuccess;
+        return;
     }
-    SGTimeManipulation *mL = [[SGTimeManipulation alloc] init];
-    BOOL isTimeManipulated = [mL isTimeManipulation];
-    
-    // Compare system time with network time
-    // Implementation will be added
-    return isTimeManipulated;
+    [_timeTamperingDetector verifyTimeWithNTPCompletion:completion];
 }
 
 - (SGSecurityCheckResult)checkUSBDebugging {
     if (self.configuration.usbDebuggingLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    BOOL isDebug =   [SGJailbreakChecker amIJailbroken];
-    // Check if device is connected to Xcode
-    // Implementation will be added
-    return SGSecurityCheckResultSuccess;
+    return [SGDebuggerChecker amIDebugged];
 }
 
 - (SGSecurityCheckResult)checkEmulator {
