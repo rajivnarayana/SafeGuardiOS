@@ -19,6 +19,7 @@
 #import "SGTimeManipulation.h"
 #import "SGVPNConnection.h"
 #import "SGWifiSecure.h"
+#import "SGChecksumValidation.h"
 #import "iOSSecuritySuiteObjectiveC/SGJailbreakChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGDebuggerChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGEmulatorChecker.h"
@@ -37,7 +38,7 @@
 @property (nonatomic, strong) nw_path_monitor_t networkMonitor;
 @property (nonatomic, strong) SGSecurityConfiguration *configuration;
 @property (nonatomic, strong) SGWifiSecure *wifiMonitor;
-
+@property (nonatomic, strong) SGMockLocation *locationManager;
 @end
 
 @implementation SGSecurityChecker
@@ -59,6 +60,7 @@
         _isShowingAlert = NO;
         _securityQueue = dispatch_queue_create("com.safeguard.securitycheck", DISPATCH_QUEUE_SERIAL);
         _wifiMonitor = [[SGWifiSecure alloc] init];
+        _locationManager = [[SGMockLocation alloc] init];
     }
     return self;
 }
@@ -243,9 +245,24 @@
                               level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
         
+        result = [self checkCheckSumValue];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"Checksum not matched"
+                            message:@"Checksum not check"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
         
     });
 }
+- (SGSecurityCheckResult)checkCheckSumValue {
+    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    SGChecksumValidation *mL = [[SGChecksumValidation alloc] init];
+    mL.hashValue = @"org.cocoapods.demo.SafeGuardiOS-Example";
+    return  [mL isChecksumValid];
+}
+
 - (SGSecurityCheckResult)checkSpoofing {
     if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
@@ -338,6 +355,17 @@
     // Check for jailbreak indicators
     // Implementation will be added
     return rootDetected;
+}
+
+-(void)LocationALert{
+    SGMockLocation *mL = [[SGMockLocation alloc] init];
+    
+    BOOL result = [mL isMockLocation];
+    if (result) {
+        [self showSecurityAlert:@"Mock Location"
+                        message:@"Mock location is enabled"
+                          level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+    }
 }
 
 - (SGSecurityCheckResult)checkMockLocation {
@@ -458,6 +486,7 @@
     }
     
     [self stopNetworkMonitoring];
+    [self stopLocationMonitoring];
     [self.alertQueue removeAllObjects];
 }
 
@@ -469,6 +498,9 @@
     [_wifiMonitor stopMonitoring];
 }
 
+- (void)stopLocationMonitoring {
+    [_locationManager stopMontiring];
+}
 
 - (void)dealloc {
     [self cleanup];

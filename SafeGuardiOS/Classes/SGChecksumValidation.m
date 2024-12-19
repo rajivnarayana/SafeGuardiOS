@@ -2,20 +2,13 @@
 //  SGChecksumValidation.m
 //  SafeGuardiOS
 //
-//  Created by Khousic on 19/12/24.
+//  Created by Khousic on 20/12/24.
 //
 
 #import "SGChecksumValidation.h"
 #import "CryptLib.h"
 @implementation SGChecksumValidation
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        
-    }
-    return self;
-}
 
 - (NSString *)calculateSHA256ForAppBinary {
     NSString *appPath = [[NSBundle mainBundle] bundlePath];
@@ -36,7 +29,7 @@
 
 
 -(BOOL)isChecksumValid{
-    NSString *publishedChecksum = @"<published_checksum>";  // paste the checksum string
+    NSString *publishedChecksum = _hashValue;  // paste the checksum string
     NSString *calculatedChecksum = [self calculateSHA256ForAppBinary];
     
     if ([calculatedChecksum isEqualToString:publishedChecksum]) {
@@ -47,5 +40,4 @@
         return NO;
     }
 }
-
 @end
