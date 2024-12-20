@@ -21,6 +21,7 @@
 #import "SGVPNConnection.h"
 #import "SGWifiSecure.h"
 #import "SGChecksumValidation.h"
+#import "iOSSecuritySuiteObjectiveC/SGIntegrityChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGJailbreakChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGDebuggerChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGEmulatorChecker.h"
@@ -290,9 +291,9 @@
     if (self.configuration.spoofingLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    SGSpoofingDetected *mL = [[SGSpoofingDetected alloc] init];
-    mL.bundleID = self.configuration.expectedBundleIdentifier;
-    return  [mL isSpoofingDetected];
+    SGFileIntegrityCheck *fileIntegrityCheck = [SGFileIntegrityCheck bundleIDCheck:self.configuration.expectedBundleIdentifier];
+    SGIntegrityCheckResult *result = [SGIntegrityChecker amITamperedWithChecks:@[fileIntegrityCheck]];
+    return  result.result == YES ? SGSecurityCheckResultSuccess : self.configuration.spoofingLevel == SGSecurityLevelError ? SGSecurityCheckResultError: SGSecurityCheckResultWarning;
 }
 
 - (SGSecurityCheckResult)checkTapJack {
@@ -438,11 +439,9 @@
     if (self.configuration.signatureVerificationLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    SGAppSignature *mL = [[SGAppSignature alloc] init];
-    BOOL appSign = [mL isAppSignatureValid];
-    // Verify app signature and integrity
-    // Implementation will be added
-    return appSign;
+    SGFileIntegrityCheck *fileIntegrityCheck = [SGFileIntegrityCheck mobileProvisionCheck:self.configuration.expectedSignature];
+    SGIntegrityCheckResult *result = [SGIntegrityChecker amITamperedWithChecks:@[fileIntegrityCheck]];
+    return  result.result == YES ? SGSecurityCheckResultSuccess : self.configuration.spoofingLevel == SGSecurityLevelError ? SGSecurityCheckResultError: SGSecurityCheckResultWarning;
 }
 
 - (SGSecurityCheckResult)checkNetworkSecurity {

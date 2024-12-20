@@ -114,7 +114,7 @@
 
 + (BOOL)checkBundleID:(NSString *)expectedBundleID {
     NSString *currentBundleID = [[NSBundle mainBundle] bundleIdentifier];
-    return ![expectedBundleID isEqualToString:currentBundleID];
+    return [expectedBundleID isEqualToString:currentBundleID];
 }
 
 + (BOOL)checkMobileProvision:(NSString *)expectedSha256 {
