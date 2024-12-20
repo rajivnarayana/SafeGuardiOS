@@ -50,7 +50,7 @@
         NSDictionary *info = (__bridge_transfer NSDictionary *)CNCopyCurrentNetworkInfo((__bridge CFStringRef)ifname);
         if (info) {
             NSString *SSID = info[@"SSID"];
-            NSString *BSSID = info[@"BSSID"];
+//            NSString *BSSID = info[@"BSSID"];
             NSLog(@"Connected to Wi-Fi Network: %@", SSID);
             // Here you can check if SSID or BSSID matches your secured network list
             [self checkWiFiSecurityStatusForSSID:SSID];
