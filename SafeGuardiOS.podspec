@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name             = 'SafeGuard'
+  s.name             = 'SafeGuardiOS'
   s.version          = '0.1.0'
   s.summary          = 'A comprehensive iOS security suite for runtime integrity checking and jailbreak detection'
 
@@ -17,7 +17,7 @@ jailbreak detection, and anti-tampering capabilities. Key features include:
   s.homepage         = 'https://github.com/rajivnarayana/SafeGuardiOS'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Rajiv Singaseni' => 'rajiv@webileapps.com' }
-  s.source           = { :git => 'https://github.com/rajivnarayana/SafeGuardiOS.git', :tag => s.version.to_s }
+  s.source           = { :git => 'git@github.com:rajivnarayana/SafeGuardiOS.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '12.0'
   s.source_files = 'SafeGuard/Classes/**/*.{h,m}'

@@ -327,11 +327,11 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SafeGuardiOS_Example/Pods-SafeGuardiOS_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/SafeGuard/SafeGuard.framework",
+				"${BUILT_PRODUCTS_DIR}/SafeGuardiOS/SafeGuardiOS.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SafeGuard.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SafeGuardiOS.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
