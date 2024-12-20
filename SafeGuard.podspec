@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint SafeGuardiOS.podspec' to ensure this is a
+# Be sure to run `pod lib lint SafeGuard.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -21,11 +21,11 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/Rajiv Singaseni/SafeGuardiOS'
+  s.homepage         = 'https://github.com/Rajiv Singaseni/SafeGuard'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Rajiv Singaseni' => 'rajiv@webileapps.com' }
-  s.source           = { :git => 'https://github.com/Rajiv Singaseni/SafeGuardiOS.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/Rajiv Singaseni/SafeGuard.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '12.0'
@@ -35,7 +35,7 @@ TODO: Add long description of the pod here.
   s.resource_bundles = {'SGSecurityPrivacy' => ['SafeGuard/Resources/PrivacyInfo.xcprivacy']}
   
   # s.resource_bundles = {
-  #   'SafeGuardiOS' => ['SafeGuardiOS/Assets/*.png']
+  #   'SafeGuard' => ['SafeGuard/Assets/*.png']
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'

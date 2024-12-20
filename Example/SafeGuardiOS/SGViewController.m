@@ -7,7 +7,7 @@
 //
 
 #import "SGViewController.h"
-#import <SafeGuardiOS/SGSecurityChecker.h>
+#import <SafeGuard/SGSecurityChecker.h>
 #import <UIKit/UIKit.h>
 
 @interface SGViewController ()
