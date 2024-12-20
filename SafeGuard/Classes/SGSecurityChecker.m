@@ -31,7 +31,7 @@
 
 
 
-@interface SGSecurityChecker ()
+@interface SGSecurityChecker ()<SGAudioCallAlertProtocol>
 
 @property (nonatomic, strong) NSMutableArray *alertQueue;
 @property (nonatomic, assign) BOOL isShowingAlert;
@@ -66,6 +66,7 @@
         _locationManager = [[SGMockLocation alloc] init];
         _timeTamperingDetector = [[SGTimeTamperingDetector alloc] init];
         _audioCallDetector = [[SGAudioCallDetection alloc] init];
+        _audioCallDetector.delegate = self;
     }
     return self;
 }
@@ -502,6 +503,15 @@
 
 - (void)dealloc {
     [self cleanup];
+}
+
+- (void)callStarted { 
+    SGSecurityCheckResult result = [self checkAudioCall];
+    if (result != SGSecurityCheckResultSuccess) {
+        [self showSecurityAlert:@"Audio Call Detected"
+                        message:@"Audio Call Detected check"
+                          level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+    }
 }
 
 @end

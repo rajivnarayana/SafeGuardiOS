@@ -10,8 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol SGAudioCallAlertProtocol <NSObject>
+
+-(void)callStarted;
+
+@end
+
 @interface SGAudioCallDetection : NSObject<CXCallObserverDelegate>
 @property (nonatomic, strong) CXCallObserver *callObserver;
+@property (nonatomic, weak) id<SGAudioCallAlertProtocol> delegate;
 @property bool isCallDetect;
 
 - (BOOL)isAudioCallDetected;

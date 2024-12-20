@@ -1,6 +1,5 @@
 #import <Foundation/Foundation.h>
 #import "SGSecurityConfiguration.h"
-#import <CallKit/CallKit.h>
 #import "CoreLocation/CoreLocation.h"
 
 typedef NS_ENUM(NSInteger, SGSecurityCheckResult) {
@@ -11,7 +10,7 @@ typedef NS_ENUM(NSInteger, SGSecurityCheckResult) {
 
 typedef void(^SGSecurityAlertHandler)(NSString *title, NSString *message, SGSecurityLevel level, void(^completion)(BOOL shouldQuit));
 
-@interface SGSecurityChecker : NSObject<CXCallObserverDelegate,CLLocationManagerDelegate>
+@interface SGSecurityChecker : NSObject<CLLocationManagerDelegate>
 
 @property (nonatomic, strong) SGSecurityConfiguration *configuration;
 @property (nonatomic, copy) SGSecurityAlertHandler alertHandler;

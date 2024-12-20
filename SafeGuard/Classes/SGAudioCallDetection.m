@@ -25,6 +25,9 @@
     if (call.hasConnected && !call.hasEnded) {
         // If an audio call is ongoing, show an alert
         _isCallDetect = true;
+        if (self.delegate) {
+            [self.delegate callStarted];
+        }
     }else{
         _isCallDetect = false;
     }
