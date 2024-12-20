@@ -17,13 +17,13 @@ SafeGuardiOS is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'SafeGuardiOS'
+pod 'SafeGuard'
 ```
 
 ## Author
 
-Rajiv Singaseni, rajiv@webileapps.com
+Rajiv
 
 ## License
 
-SafeGuardiOS is available under the MIT license. See the LICENSE file for more info.
+SafeGuard is available under the MIT license. See the LICENSE file for more info.
