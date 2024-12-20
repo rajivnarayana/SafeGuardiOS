@@ -40,6 +40,7 @@
 @property (nonatomic, strong) SGWifiSecure *wifiMonitor;
 @property (nonatomic, strong) SGMockLocation *locationManager;
 @property (nonatomic, strong) SGTimeTamperingDetector *timeTamperingDetector;
+@property (nonatomic, strong) SGAudioCallDetection *audioCallDetector;
 
 @end
 
@@ -64,6 +65,7 @@
         _wifiMonitor = [[SGWifiSecure alloc] init];
         _locationManager = [[SGMockLocation alloc] init];
         _timeTamperingDetector = [[SGTimeTamperingDetector alloc] init];
+        _audioCallDetector = [[SGAudioCallDetection alloc] init];
     }
     return self;
 }
@@ -256,10 +258,26 @@
                               level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
         }
         
+        result = [self checkKeyLoggers];
+        if (result != SGSecurityCheckResultSuccess) {
+            [self showSecurityAlert:@"KeyLoggers Detected"
+                            message:@"KeyLoggers Detected"
+                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+        }
+        
     });
 }
+
+- (SGSecurityCheckResult)checkKeyLoggers {
+    if (self.configuration.keyLoggersLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    SGKeyLoggers *mL = [[SGKeyLoggers alloc] init];
+    return  [mL isKeyLoggerDetected];
+}
+
 - (SGSecurityCheckResult)checkCheckSumValue {
-    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+    if (self.configuration.checkSumLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGChecksumValidation *mL = [[SGChecksumValidation alloc] init];
@@ -268,7 +286,7 @@
 }
 
 - (SGSecurityCheckResult)checkSpoofing {
-    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+    if (self.configuration.spoofingLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGSpoofingDetected *mL = [[SGSpoofingDetected alloc] init];
@@ -277,7 +295,7 @@
 }
 
 - (SGSecurityCheckResult)checkTapJack {
-    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+    if (self.configuration.tapJackLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGTapJacked *mL = [[SGTapJacked alloc] init];
@@ -285,7 +303,7 @@
 }
 
 - (SGSecurityCheckResult)checkVpnCheck {
-    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+    if (self.configuration.vpnCheckLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGVPNConnection *mL = [[SGVPNConnection alloc] init];
@@ -294,7 +312,7 @@
 
 
 - (SGSecurityCheckResult)checkScreenRecording {
-    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+    if (self.configuration.screenRecordingLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGScreenRecording *mL = [[SGScreenRecording alloc] init];
@@ -302,7 +320,7 @@
 }
 
 - (SGSecurityCheckResult)checkScreenShotPrevention {
-    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+    if (self.configuration.screenShotLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGScreenShotPrevention *mL = [[SGScreenShotPrevention alloc] init];
@@ -326,7 +344,7 @@
 //#endif
 }
 - (SGSecurityCheckResult)checkMalware {
-    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+    if (self.configuration.malwareLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGMalwareDetected *mL = [[SGMalwareDetected alloc] init];
@@ -334,14 +352,14 @@
 }
 
 - (SGSecurityCheckResult)checkRootClocking {
-    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+    if (self.configuration.rootClockingLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGRootClocking *mL = [[SGRootClocking alloc] init];
     return  [mL isRootClocking];
 }
 - (SGSecurityCheckResult)checkAudioCall {
-    if (self.configuration.mockLocationLevel == SGSecurityLevelDisable) {
+    if (self.configuration.audioCallLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGAudioCallDetection *mL = [[SGAudioCallDetection alloc] init];
@@ -352,12 +370,7 @@
     if (self.configuration.rootDetectionLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    
-//    SGRootDetection *rootDetection = [[SGRootDetection alloc] init];
-//    BOOL rootDetected = [rootDetection isRootDetected];
     BOOL rootDetected =   [SGJailbreakChecker amIJailbroken];
-    // Check for jailbreak indicators
-    // Implementation will be added
     return rootDetected;
 }
 
@@ -385,7 +398,7 @@
 }
 
 - (SGSecurityCheckResult)checkEmulator {
-    if (self.configuration.usbDebuggingLevel == SGSecurityLevelDisable) {
+    if (self.configuration.emulatorLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
  
@@ -393,7 +406,7 @@
 }
 
 - (SGSecurityCheckResult)checkReverseEngineer {
-    if (self.configuration.usbDebuggingLevel == SGSecurityLevelDisable) {
+    if (self.configuration.reverseEngineerLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
  
@@ -401,7 +414,7 @@
 }
 
 - (SGSecurityCheckResult)checkProxy {
-    if (self.configuration.usbDebuggingLevel == SGSecurityLevelDisable) {
+    if (self.configuration.proxyLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
  

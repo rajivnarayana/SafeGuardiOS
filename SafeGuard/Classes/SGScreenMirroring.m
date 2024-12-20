@@ -12,7 +12,8 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _isDetect = false;
+       
+        [self screenRec];
     }
     return self;
 }
@@ -26,13 +27,14 @@
             if ([UIScreen mainScreen].isCaptured) {
                 NSLog(@"Screen is being recorded or mirrored.");
                 self->_isDetect = true;
+               // [self isScreenMirrored];
             }
         }];
     }
 }
 
 -(BOOL)isScreenMirrored{
-    [self screenRec];
+   
     return _isDetect;
 }
 @end
