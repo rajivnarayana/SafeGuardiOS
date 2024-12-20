@@ -317,7 +317,7 @@
         return SGSecurityCheckResultSuccess;
     }
     SGScreenRecording *mL = [[SGScreenRecording alloc] init];
-    return  [mL isScreenRecorded];
+    return  [mL isScreenBeingCaptured];
 }
 
 - (SGSecurityCheckResult)checkScreenShotPrevention {
@@ -428,7 +428,7 @@
         return SGSecurityCheckResultSuccess;
     }
     SGScreenMirroring *mL = [[SGScreenMirroring alloc] init];
-    BOOL isScreenShare = [mL isScreenMirrored];
+    BOOL isScreenShare = [mL isScreenBeingCaptured];
     // Check for screen recording or mirroring
     // Implementation will be added
     return isScreenShare;

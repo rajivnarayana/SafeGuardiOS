@@ -13,28 +13,33 @@
     self = [super init];
     if (self) {
        
-        [self screenRec];
+      //  [self screenRec];
     }
     return self;
 }
 
--(void)screenRec{
-    if (@available(iOS 11.0, *)) {
-        [[NSNotificationCenter defaultCenter] addObserverForName:UIScreenCapturedDidChangeNotification
-                                                          object:nil
-                                                           queue:[NSOperationQueue mainQueue]
-                                                      usingBlock:^(NSNotification * _Nonnull note) {
-            if ([UIScreen mainScreen].isCaptured) {
-                NSLog(@"Screen is being recorded or mirrored.");
-                self->_isDetect = true;
-               // [self isScreenMirrored];
-            }
-        }];
+- (BOOL)isScreenBeingCaptured {
+    __block BOOL isCaptured = NO; // Block variable to hold the status
+
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIScreenCapturedDidChangeNotification
+                                                      object:nil
+                                                       queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:^(NSNotification * _Nonnull note) {
+        if ([UIScreen mainScreen].isCaptured) {
+            NSLog(@"Screen is being recorded or mirrored.");
+            isCaptured = YES; // Update the status
+        } else {
+            isCaptured = NO; // Reset the status
+        }
+    }];
+
+    // Check the current status immediately
+    if ([UIScreen mainScreen].isCaptured) {
+        isCaptured = YES;
     }
+
+    return isCaptured;
 }
 
--(BOOL)isScreenMirrored{
-   
-    return _isDetect;
-}
+
 @end
