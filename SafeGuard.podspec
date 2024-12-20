@@ -1,45 +1,31 @@
-#
-# Be sure to run `pod lib lint SafeGuard.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
-#
-
 Pod::Spec.new do |s|
   s.name             = 'SafeGuard'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of SafeGuard.'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
+  s.summary          = 'A comprehensive iOS security suite for runtime integrity checking and jailbreak detection'
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+SafeGuard is a powerful iOS security framework that provides comprehensive runtime integrity checking,
+jailbreak detection, and anti-tampering capabilities. Key features include:
+* Advanced jailbreak detection
+* Runtime integrity verification
+* Debugger and reverse engineering detection
+* MSHook and code injection prevention
+* Network security monitoring
+* Emulator detection
                        DESC
 
-  s.homepage         = 'https://github.com/Rajiv Singaseni/SafeGuard'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  s.homepage         = 'https://github.com/rajivnarayana/SafeGuardiOS'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Rajiv Singaseni' => 'rajiv@webileapps.com' }
-  s.source           = { :git => 'https://github.com/Rajiv Singaseni/SafeGuard.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.source           = { :git => 'https://github.com/rajivnarayana/SafeGuardiOS.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '12.0'
+  s.source_files = 'SafeGuard/Classes/**/*.{h,m}'
+  s.resource_bundles = {
+    'SGSecurityPrivacy' => ['SafeGuard/Resources/PrivacyInfo.xcprivacy']
+  }
 
-  s.source_files = 'SafeGuard/Classes/**/*'
-  
-  s.resource_bundles = {'SGSecurityPrivacy' => ['SafeGuard/Resources/PrivacyInfo.xcprivacy']}
-  
-  # s.resource_bundles = {
-  #   'SafeGuard' => ['SafeGuard/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
+  s.public_header_files = 'SafeGuard/Classes/**/*.h'
   s.ios.frameworks = 'UIKit', 'Foundation'
   s.requires_arc = true
-  # s.dependency 'AFNetworking', '~> 2.3'
 end
