@@ -70,7 +70,7 @@
             if (distance > 1000) { // Detect large jumps, e.g., > 1000 meters
                 NSLog(@"Possible mock location detected. Large jump in distance.");
                 _isLocationMockked = YES;
-              bool lN =   [self isMockLocation];
+                [self isMockLocation];
             }
         }
         

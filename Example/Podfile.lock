@@ -1,5 +1,5 @@
 PODS:
-  - SafeGuardiOS (0.1.0)
+  - SafeGuardiOS (0.1.1)
 
 DEPENDENCIES:
   - SafeGuardiOS (from `../`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  SafeGuardiOS: e050c98591a40c2b941f1c2c0a8d3c562b5bfb10
+  SafeGuardiOS: 4e16299687f27fee68e8fc8a7c1ac31f8585e23e
 
 PODFILE CHECKSUM: 1952112a5973efa4613168b5a072cb077c55c3da
 

@@ -22,7 +22,8 @@ jailbreak detection, and anti-tampering capabilities. Key features include:
   s.ios.deployment_target = '12.0'
   s.source_files = 'SafeGuard/Classes/**/*.{h,m}'
   s.resource_bundles = {
-    'SGSecurityPrivacy' => ['SafeGuard/Resources/PrivacyInfo.xcprivacy']
+    'SGSecurityPrivacy' => ['SafeGuard/Resources/PrivacyInfo.xcprivacy'],
+    'SafeGuard' => ['SafeGuard/Resources/Localizable.strings']
   }
 
   s.public_header_files = 'SafeGuard/Classes/**/*.h'

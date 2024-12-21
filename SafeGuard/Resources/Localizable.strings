@@ -1,0 +1,44 @@
+// Security Alerts - General
+"tap_jacking_alert" = "Your screen is being obscured by another app. Please close any overlays and try again.";
+"rooted_critical" = "Jailbroken devices/emulators are not supported for this application.";
+"rooted_warning" = "Jailbroken devices or emulators can pose significant security risks.";
+
+// Network Security
+"vpn_warning" = "Active VPN connection detected, which may pose potential security risks.";
+"proxy_warning" = "Active Proxy connection detected, which may pose potential security risks.";
+"unsecured_network_warning" = "An unsecured network connection has been detected.";
+
+// Device Settings
+"auto_time_warning" = "Please enable automatic date and time settings for security.";
+"developer_options_warning" = "Developer options are enabled on this device, which may pose security risks";
+"mock_location_warning" = "Mock location is enabled, which may affect the accuracy of location data.";
+"usb_debugging_warning" = "USB debugging is enabled, which may pose security risks.";
+
+// Application Security
+"app_spoofing_warning" = "Application spoofing has been detected, which may compromise security.";
+"accessibility_warning" = "Accessibility Service is enabled for this app.";
+"accessibility_not_warning" = "Accessibility Service is not enabled for this app.";
+
+// Screen Security
+"screen_sharing_warning" = "Screen sharing is active, which may pose a security risk.";
+"screen_mirroring_warning" = "Screen mirroring is active, which may pose a security risk.";
+"screen_recording_warning" = "Screen recording is active, which may pose a security risk.";
+
+// App Integrity
+"app_signature_warning" = "App verification failed! The app signature does not match the expected credentials. This may indicate unauthorized changes or tampering.";
+"app_signature_critical" = "App signature invalid! Potential tampering or unauthorized modification detected. The app cannot proceed and will now terminate.";
+
+// Call State
+"in_call_warning" = "Voice call is active on your device. This may pose a security risk.";
+"in_call_critical" = "Voice call is active on your device. This poses a significant security risk and must be disabled to proceed.";
+"ongoing_call_warning" = "An ongoing call is detected. This may pose security risks.";
+"ongoing_call_critical" = "An ongoing call is detected. Please end the call to continue using the application.";
+
+// Additional Security Messages
+"malware_warning" = "Malware has been detected on your device. This may pose a security risk.";
+"root_clocking_warning" = "Root clock manipulation has been detected. This may pose a security risk.";
+"screen_shot_warning" = "Screenshot capture has been detected. This may pose a security risk.";
+"spoofing_warning" = "Application spoofing has been detected. This is not allowed.";
+"tap_jack_warning" = "Tap jacking attempt has been detected. This may pose a security risk.";
+"checksum_warning" = "Application checksum validation failed. This may indicate unauthorized changes or tampering.";
+"key_loggers_warning" = "Keylogger activity has been detected. This may pose a security risk.";

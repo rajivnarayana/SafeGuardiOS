@@ -1,5 +1,4 @@
 #import "SGSecurityChecker.h"
-#import "SGDeveloperOptionsCheck.h"
 #import <Network/Network.h>
 #import "SGRootDetection.h"
 #import "SGMockLocation.h"
@@ -19,18 +18,14 @@
 #import "SGTimeManipulation.h"
 #import "SGTimeTamperingDetector.h"
 #import "SGVPNConnection.h"
-#import "SGWifiSecure.h"
-#import "SGChecksumValidation.h"
+//#import "SGWifiSecure.h"
 #import "iOSSecuritySuiteObjectiveC/SGIntegrityChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGJailbreakChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGDebuggerChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGEmulatorChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGReverseEngineeringToolsChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGNetworkChecker.h"
-
-
-
-
+#import "SGSecurityMessages.h"
 
 @interface SGSecurityChecker ()<SGAudioCallAlertProtocol>
 
@@ -38,7 +33,7 @@
 @property (nonatomic, assign) BOOL isShowingAlert;
 @property (nonatomic, strong) dispatch_queue_t securityQueue;
 @property (nonatomic, strong) nw_path_monitor_t networkMonitor;
-@property (nonatomic, strong) SGWifiSecure *wifiMonitor;
+//@property (nonatomic, strong) SGWifiSecure *wifiMonitor;
 @property (nonatomic, strong) SGMockLocation *locationManager;
 @property (nonatomic, strong) SGTimeTamperingDetector *timeTamperingDetector;
 @property (nonatomic, strong) SGAudioCallDetection *audioCallDetector;
@@ -63,7 +58,7 @@
         _alertQueue = [NSMutableArray new];
         _isShowingAlert = NO;
         _securityQueue = dispatch_queue_create("com.safeguard.securitycheck", DISPATCH_QUEUE_SERIAL);
-        _wifiMonitor = [[SGWifiSecure alloc] init];
+//        _wifiMonitor = [[SGWifiSecure alloc] init];
         _locationManager = [[SGMockLocation alloc] init];
         _timeTamperingDetector = [[SGTimeTamperingDetector alloc] init];
         _audioCallDetector = [[SGAudioCallDetection alloc] init];
@@ -116,157 +111,31 @@
 
 - (void)performAllSecurityChecks {
     dispatch_async(self.securityQueue, ^{
-        SGSecurityCheckResult result;
-        
-        result = [self checkDeveloperOptions];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Developer Options" 
-                            message:@"Developer options are enabled" 
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkRoot];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Root Access" 
-                            message:@"Device is rooted" 
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkMockLocation];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Mock Location" 
-                            message:@"Mock location is enabled" 
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
+        [self checkDeveloperOptions];
+        [self checkRoot];
+        [self checkMockLocation];
         [self checkTimeManipulationWithCompletion:^(BOOL isSynchronized) {
             if (!isSynchronized) {
                 [self showSecurityAlert:@"Time Manipulation" 
-                                message:@"Time manipulation is detected" 
-                                  level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
+                                message:[SGSecurityMessages autoTimeWarning]
+                                  level:self.configuration.timeManipulationLevel];
             }
         }];
-        
-        result = [self checkUSBDebugging];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"USB Debugging" 
-                            message:@"USB debugging is enabled" 
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkScreenSharing];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Screen Sharing" 
-                            message:@"Screen sharing is enabled" 
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkSignature];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Signature Verification" 
-                            message:@"Signature verification failed" 
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkNetworkSecurity];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Network Security" 
-                            message:@"Network security check failed" 
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkEmulator];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Emulator Check"
-                            message:@"App running in Virtual device / Simulator"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        
-        result = [self checkProxy];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Proxy Check"
-                            message:@"Network check, App Running in a Proxy Network "
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkReverseEngineer];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Reverse Engineer"
-                            message:@"Reverse Engineer Check"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkAudioCall];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Audio Call Detected"
-                            message:@"Audio Call Detected check"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkMalware];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Malware Detected"
-                            message:@"Malware Detected check"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkRootClocking];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Root Clocking Detected"
-                            message:@"Root Clocking Detected check"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkScreenRecording];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Screen Recording Detected"
-                            message:@"Screen Recording Detected check"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkScreenShotPrevention];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"ScreenShot Detected"
-                            message:@"ScreenShot Detected check"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkSpoofing];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Spoofing Detected"
-                            message:@"Spoofing Detected check"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkTapJack];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"TapJack Detected"
-                            message:@"TapJack Detected check"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkVpnCheck];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"VpnCheck Detected"
-                            message:@"VpnCheck Detected check"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkCheckSumValue];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"Checksum not matched"
-                            message:@"Checksum not check"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
-        result = [self checkKeyLoggers];
-        if (result != SGSecurityCheckResultSuccess) {
-            [self showSecurityAlert:@"KeyLoggers Detected"
-                            message:@"KeyLoggers Detected"
-                              level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
-        }
-        
+        [self checkUSBDebugging];
+        [self checkScreenSharing];
+        [self checkSignature];
+        [self checkNetworkSecurity];
+        [self checkEmulator];
+        [self checkReverseEngineer];
+        [self checkAudioCall];
+        [self checkMalware];
+        [self checkRootClocking];
+        [self checkScreenRecording];
+        [self checkScreenShotPrevention];
+        [self checkSpoofing];
+        [self checkTapJack];
+//        [self checkCheckSumValue];
+        [self checkKeyLoggers];
     });
 }
 
@@ -275,7 +144,14 @@
         return SGSecurityCheckResultSuccess;
     }
     SGKeyLoggers *mL = [[SGKeyLoggers alloc] init];
-    return  [mL isKeyLoggerDetected];
+    if ([mL isKeyLoggerDetected]) {
+        [self showSecurityAlert:@"KeyLoggers Detected"
+                        message:[SGSecurityMessages keyLoggersWarning]
+                          level:self.configuration.keyLoggersLevel];
+        return (self.configuration.keyLoggersLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkCheckSumValue {
@@ -284,7 +160,14 @@
     }
     SGChecksumValidation *mL = [[SGChecksumValidation alloc] init];
     mL.hashValue = @"org.cocoapods.demo.SafeGuardiOS-Example";
-    return  [mL isChecksumValid];
+    if (![mL isChecksumValid]) {
+        [self showSecurityAlert:@"Checksum not matched"
+                        message:[SGSecurityMessages checksumWarning]
+                          level:self.configuration.checkSumLevel];
+        return (self.configuration.checkSumLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkSpoofing {
@@ -293,7 +176,14 @@
     }
     SGFileIntegrityCheck *fileIntegrityCheck = [SGFileIntegrityCheck bundleIDCheck:self.configuration.expectedBundleIdentifier];
     SGIntegrityCheckResult *result = [SGIntegrityChecker amITamperedWithChecks:@[fileIntegrityCheck]];
-    return  result.result == YES ? SGSecurityCheckResultSuccess : self.configuration.spoofingLevel == SGSecurityLevelError ? SGSecurityCheckResultError: SGSecurityCheckResultWarning;
+    if (result.result == NO) {
+        [self showSecurityAlert:@"Spoofing Detected"
+                        message:[SGSecurityMessages spoofingWarning]
+                          level:self.configuration.spoofingLevel];
+        return (self.configuration.spoofingLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkTapJack {
@@ -301,7 +191,14 @@
         return SGSecurityCheckResultSuccess;
     }
     SGTapJacked *mL = [[SGTapJacked alloc] init];
-    return  [mL isTapJackedDevice];
+    if ([mL isTapJackedDevice]) {
+        [self showSecurityAlert:@"TapJack Detected"
+                        message:[SGSecurityMessages tapJackWarning]
+                          level:self.configuration.tapJackLevel];
+        return (self.configuration.tapJackLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkVpnCheck {
@@ -309,16 +206,29 @@
         return SGSecurityCheckResultSuccess;
     }
     SGVPNConnection *mL = [[SGVPNConnection alloc] init];
-    return  [mL isVPNConnected];
+    if ([mL isVPNConnected]) {
+        [self showSecurityAlert:@"VpnCheck Detected"
+                        message:[SGSecurityMessages vpnWarning]
+                          level:self.configuration.vpnCheckLevel];
+        return (self.configuration.vpnCheckLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
-
 
 - (SGSecurityCheckResult)checkScreenRecording {
     if (self.configuration.screenRecordingLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGScreenRecording *mL = [[SGScreenRecording alloc] init];
-    return  [mL isScreenBeingCaptured];
+    if ([mL isScreenBeingCaptured]) {
+        [self showSecurityAlert:@"Screen Recording Detected"
+                        message:[SGSecurityMessages screenRecordingWarning]
+                          level:self.configuration.screenRecordingLevel];
+        return (self.configuration.screenRecordingLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkScreenShotPrevention {
@@ -327,7 +237,14 @@
     }
     SGScreenShotPrevention *mL = [[SGScreenShotPrevention alloc] init];
     [mL preventScreenShot];
-    return  [mL isSSTaken];
+    if ([mL isSSTaken]) {
+        [self showSecurityAlert:@"ScreenShot Detected"
+                        message:[SGSecurityMessages screenShotWarning]
+                          level:self.configuration.screenShotLevel];
+        return (self.configuration.screenShotLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkDeveloperOptions {
@@ -336,21 +253,32 @@
     }
     
     SGDeveloperEnabled *mL = [[SGDeveloperEnabled alloc] init];
-    return  [mL isDeveloperEnabled];
+    BOOL isDeveloperOptionsEnabled = [mL isDeveloperEnabled];
     
-//#if DEBUG
-//    return (self.configuration.developerOptionsLevel == SGSecurityLevelError) ? 
-//    SGSecurityCheckResultError : SGSecurityCheckResultWarning;
-//#else
-//    return SGSecurityCheckResultSuccess;
-//#endif
+    if (isDeveloperOptionsEnabled) {
+        [self showSecurityAlert:@"Developer Options" 
+                        message:[SGSecurityMessages developerOptionsWarning]
+                          level:self.configuration.developerOptionsLevel];
+        return (self.configuration.developerOptionsLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    
+    return SGSecurityCheckResultSuccess;
 }
+
 - (SGSecurityCheckResult)checkMalware {
     if (self.configuration.malwareLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGMalwareDetected *mL = [[SGMalwareDetected alloc] init];
-    return  [mL malwareDetected];
+    if ([mL malwareDetected]) {
+        [self showSecurityAlert:@"Malware Detected"
+                        message:[SGSecurityMessages malwareWarning]
+                          level:self.configuration.malwareLevel];
+        return (self.configuration.malwareLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkRootClocking {
@@ -358,14 +286,31 @@
         return SGSecurityCheckResultSuccess;
     }
     SGRootClocking *mL = [[SGRootClocking alloc] init];
-    return  [mL isRootClocking];
+    if ([mL isRootClocking]) {
+        [self showSecurityAlert:@"Root Clocking Detected"
+                        message:[SGSecurityMessages rootClockingWarning]
+                          level:self.configuration.rootClockingLevel];
+        return (self.configuration.rootClockingLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
+
 - (SGSecurityCheckResult)checkAudioCall {
     if (self.configuration.audioCallLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
     SGAudioCallDetection *mL = [[SGAudioCallDetection alloc] init];
-    return  [mL isAudioCallDetected];
+    if ([mL isAudioCallDetected]) {
+        [self showSecurityAlert:@"Audio Call Detected"
+                        message:(self.configuration.audioCallLevel == SGSecurityLevelError ? 
+                                [SGSecurityMessages inCallCritical] : 
+                                [SGSecurityMessages inCallWarning])
+                          level:self.configuration.audioCallLevel];
+        return (self.configuration.audioCallLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkRoot {
@@ -373,7 +318,16 @@
         return SGSecurityCheckResultSuccess;
     }
     BOOL rootDetected =   [SGJailbreakChecker amIJailbroken];
-    return rootDetected;
+    if (rootDetected) {
+        [self showSecurityAlert:@"Root Access" 
+                        message:(self.configuration.rootDetectionLevel == SGSecurityLevelError ? 
+                                [SGSecurityMessages rootedCritical] : 
+                                [SGSecurityMessages rootedWarning])
+                          level:self.configuration.rootDetectionLevel];
+        return (self.configuration.rootDetectionLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkMockLocation {
@@ -382,7 +336,14 @@
     }
     SGMockLocation *mL = [[SGMockLocation alloc] init];
     BOOL isMockLocation = [mL isMockLocation];
-    return isMockLocation;
+    if (isMockLocation) {
+        [self showSecurityAlert:@"Mock Location" 
+                        message:[SGSecurityMessages mockLocationWarning]
+                          level:self.configuration.mockLocationLevel];
+        return (self.configuration.mockLocationLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (void)checkTimeManipulationWithCompletion:(void(^)(BOOL isSynchronized))completion {
@@ -396,7 +357,14 @@
     if (self.configuration.usbDebuggingLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    return [SGDebuggerChecker amIDebugged];
+    if ([SGDebuggerChecker amIDebugged]) {
+        [self showSecurityAlert:@"USB Debugging" 
+                        message:[SGSecurityMessages usbDebuggingWarning]
+                          level:self.configuration.usbDebuggingLevel];
+        return (self.configuration.usbDebuggingLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkEmulator {
@@ -404,7 +372,16 @@
         return SGSecurityCheckResultSuccess;
     }
  
-    return [SGEmulatorChecker amIRunInEmulator];
+    if ([SGEmulatorChecker amIRunInEmulator]) {
+        [self showSecurityAlert:@"Emulator Check"
+                        message:(self.configuration.emulatorLevel == SGSecurityLevelError ? 
+                                [SGSecurityMessages rootedCritical] : 
+                                [SGSecurityMessages rootedWarning])
+                          level:self.configuration.emulatorLevel];
+        return (self.configuration.emulatorLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkReverseEngineer {
@@ -412,7 +389,14 @@
         return SGSecurityCheckResultSuccess;
     }
  
-    return [SGReverseEngineeringToolsChecker amIReverseEngineered];
+    if ([SGReverseEngineeringToolsChecker amIReverseEngineered]) {
+        [self showSecurityAlert:@"Reverse Engineer"
+                        message:[SGSecurityMessages appSpoofingWarning]
+                          level:self.configuration.reverseEngineerLevel];
+        return (self.configuration.reverseEngineerLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkProxy {
@@ -420,19 +404,29 @@
         return SGSecurityCheckResultSuccess;
     }
  
-    return [SGNetworkChecker amIProxied];
+    if ([SGNetworkChecker amIProxied]) {
+        [self showSecurityAlert:@"Proxy Check"
+                        message:[SGSecurityMessages proxyWarning]
+                          level:self.configuration.proxyLevel];
+        return (self.configuration.proxyLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
-
 
 - (SGSecurityCheckResult)checkScreenSharing {
     if (self.configuration.screenSharingLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    SGScreenMirroring *mL = [[SGScreenMirroring alloc] init];
-    BOOL isScreenShare = [mL isScreenBeingCaptured];
-    // Check for screen recording or mirroring
-    // Implementation will be added
-    return isScreenShare;
+    SGScreenMirroring *check = [[SGScreenMirroring alloc] init];
+    if ([check isScreenBeingCaptured]) {
+        [self showSecurityAlert:@"Screen Sharing"
+                        message:[SGSecurityMessages screenSharingWarning]
+                          level:self.configuration.screenSharingLevel];
+        return (self.configuration.screenSharingLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkSignature {
@@ -441,18 +435,31 @@
     }
     SGFileIntegrityCheck *fileIntegrityCheck = [SGFileIntegrityCheck mobileProvisionCheck:self.configuration.expectedSignature];
     SGIntegrityCheckResult *result = [SGIntegrityChecker amITamperedWithChecks:@[fileIntegrityCheck]];
-    return  result.result == YES ? SGSecurityCheckResultSuccess : self.configuration.spoofingLevel == SGSecurityLevelError ? SGSecurityCheckResultError: SGSecurityCheckResultWarning;
+    if (result.result == NO) {
+        [self showSecurityAlert:@"Signature Verification" 
+                        message:(self.configuration.signatureVerificationLevel == SGSecurityLevelError ? 
+                                [SGSecurityMessages appSignatureCritical] : 
+                                [SGSecurityMessages appSignatureWarning])
+                          level:self.configuration.signatureVerificationLevel];
+        return (self.configuration.signatureVerificationLevel == SGSecurityLevelError) ? 
+            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 - (SGSecurityCheckResult)checkNetworkSecurity {
     if (self.configuration.networkSecurityLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    SGWifiSecure *mL = [[SGWifiSecure alloc] init];
-    BOOL networkConnection = [mL isWifiSecure];
-    // Check for VPN, proxy, and insecure networks
-    // Implementation will be added
-    return networkConnection;
+    SGSecurityCheckResult result = [self checkProxy];
+    if ( result != SGSecurityCheckResultSuccess) {
+        return result;
+    }
+    result = [self checkVpnCheck];
+    if ( result != SGSecurityCheckResultSuccess) {
+        return result;
+    }
+    return SGSecurityCheckResultSuccess;
 }
 
 #pragma mark - Network Monitoring
@@ -465,7 +472,7 @@
     BOOL isVPN = nw_path_uses_interface_type(path, nw_interface_type_other);
     if (isVPN) {
         [self showSecurityAlert:@"Network Security"
-                        message:@"VPN connection detected"
+                        message:[SGSecurityMessages vpnWarning]
                           level:self.configuration.networkSecurityLevel];
     }
 }
@@ -493,7 +500,7 @@
 }
 
 - (void)stopNetworkMonitoring {
-    [_wifiMonitor stopMonitoring];
+//    [_wifiMonitor stopMonitoring];
 }
 
 - (void)stopLocationMonitoring {
@@ -508,7 +515,7 @@
     SGSecurityCheckResult result = [self checkAudioCall];
     if (result != SGSecurityCheckResultSuccess) {
         [self showSecurityAlert:@"Audio Call Detected"
-                        message:@"Audio Call Detected check"
+                        message:(result == SGSecurityCheckResultError ? [SGSecurityMessages inCallCritical] : [SGSecurityMessages inCallWarning])
                           level:(result == SGSecurityCheckResultError ? SGSecurityLevelError : SGSecurityLevelWarning)];
     }
 }
