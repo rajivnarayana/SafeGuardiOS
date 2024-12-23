@@ -17,7 +17,7 @@ jailbreak detection, and anti-tampering capabilities. Key features include:
   s.homepage         = 'https://github.com/rajivnarayana/SafeGuardiOS'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Rajiv Singaseni' => 'rajiv@webileapps.com' }
-  s.source           = { :git => 'https://github.com:rajivnarayana/SafeGuardiOS.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/rajivnarayana/SafeGuardiOS.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '12.0'
   s.source_files = 'SafeGuard/Classes/**/*.{h,m}'
