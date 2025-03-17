@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'SafeGuardiOS'
-  s.version          = '0.1.2'
+  s.version          = '0.1.3'
   s.summary          = 'A comprehensive iOS security suite for runtime integrity checking and jailbreak detection'
 
   s.description      = <<-DESC

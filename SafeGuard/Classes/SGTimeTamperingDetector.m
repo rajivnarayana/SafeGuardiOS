@@ -120,6 +120,13 @@
         
         close(sockfd);
         
+        if (n < 0) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion(YES);
+            });
+            return;
+        }
+
         if (n < NTP_PACKET_SIZE) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completion(NO);
