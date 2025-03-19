@@ -30,6 +30,7 @@
         _rootDetectionLevel = SGSecurityLevelWarning;
         _screenSharingLevel = SGSecurityLevelWarning;
         _signatureVerificationLevel = SGSecurityLevelWarning;
+        _signatureErrorDebug = NO;
         _networkSecurityLevel = SGSecurityLevelWarning;
         _emulatorLevel = SGSecurityLevelWarning;
         _proxyLevel = SGSecurityLevelWarning;

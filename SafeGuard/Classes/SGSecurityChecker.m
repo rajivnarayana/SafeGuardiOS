@@ -436,10 +436,12 @@
     SGFileIntegrityCheck *fileIntegrityCheck = [SGFileIntegrityCheck mobileProvisionCheck:self.configuration.expectedSignature];
     SGIntegrityCheckResult *result = [SGIntegrityChecker amITamperedWithChecks:@[fileIntegrityCheck]];
     if (result.result == NO) {
-        [self showSecurityAlert:@"Signature Verification" 
-                        message:(self.configuration.signatureVerificationLevel == SGSecurityLevelError ? 
+        NSString *message = (self.configuration.signatureVerificationLevel == SGSecurityLevelError ? 
                                 [SGSecurityMessages appSignatureCritical] : 
-                                [SGSecurityMessages appSignatureWarning])
+                                [SGSecurityMessages appSignatureWarning]);
+        message = self.configuration.signatureErrorDebug ? [NSString stringWithFormat: @"Expected Signature: %@, Actual Signature: %@", self.configuration.expectedSignature, [SGIntegrityChecker actualSignatureHash]]: message;
+        [self showSecurityAlert:@"Signature Verification"
+                        message:message
                           level:self.configuration.signatureVerificationLevel];
         return (self.configuration.signatureVerificationLevel == SGSecurityLevelError) ? 
             SGSecurityCheckResultError : SGSecurityCheckResultWarning;

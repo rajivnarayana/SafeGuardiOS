@@ -15,6 +15,7 @@ typedef NS_ENUM(NSInteger, SGSecurityLevel) {
 @property (nonatomic, assign) SGSecurityLevel rootDetectionLevel;
 @property (nonatomic, assign) SGSecurityLevel screenSharingLevel;
 @property (nonatomic, assign) SGSecurityLevel signatureVerificationLevel;
+@property (nonatomic, assign) BOOL signatureErrorDebug;
 @property (nonatomic, assign) SGSecurityLevel networkSecurityLevel;
 @property (nonatomic, assign) SGSecurityLevel emulatorLevel;
 @property (nonatomic, assign) SGSecurityLevel proxyLevel;

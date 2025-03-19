@@ -17,6 +17,7 @@
     SGSecurityConfiguration *configuration = [[SGSecurityConfiguration alloc] initWithDefaultConfiguration];
     configuration.expectedBundleIdentifier = @"org.cocoapods.demo.SafeGuardiOS-Example";
     configuration.expectedSignature = @"7f37de47a4a62f8a5acc958f96a77af4b700c4f5afc530f7e2cb934d3c177af8";
+    configuration.signatureErrorDebug = YES;
     [SGSecurityChecker sharedInstance].configuration = configuration;
     
     return YES;

@@ -33,6 +33,8 @@ typedef NS_ENUM(NSInteger, SGFileIntegrityCheckType) {
 
 + (SGIntegrityCheckResult *)amITamperedWithChecks:(NSArray<SGFileIntegrityCheck *> *)checks;
 
++ (NSString *) actualSignatureHash;
+
 @end
 
 NS_ASSUME_NONNULL_END

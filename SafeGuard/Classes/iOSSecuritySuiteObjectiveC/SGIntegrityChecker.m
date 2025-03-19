@@ -138,6 +138,26 @@
     return [hashString isEqualToString:expectedSha256.lowercaseString];
 }
 
++ (NSString *) actualSignatureHash {
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
+    if (!path) {
+        return nil;
+    }
+    
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    if (!data) {
+        return nil;
+    }
+    
+    unsigned char hash[CC_SHA256_DIGEST_LENGTH];
+    CC_SHA256(data.bytes, (CC_LONG)data.length, hash);
+    
+    NSData *hashData = [NSData dataWithBytes:hash length:CC_SHA256_DIGEST_LENGTH];
+    NSString *hashString = [self hexStringFromData:hashData];
+    
+    return hashString;
+}
+
 + (BOOL)checkMachO:(NSString *)imageName expectedHash:(NSString *)expectedSha256 {
     SGMachOParse *parser = [[SGMachOParse alloc] init];
     NSData *textSectionData = nil;
