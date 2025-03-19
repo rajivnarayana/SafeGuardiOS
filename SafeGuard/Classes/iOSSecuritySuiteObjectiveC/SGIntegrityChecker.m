@@ -134,6 +134,7 @@
     NSData *hashData = [NSData dataWithBytes:hash length:CC_SHA256_DIGEST_LENGTH];
     NSString *hashString = [self hexStringFromData:hashData];
     
+    NSLog(@"Expected Hash: %@, Actual Hash: %@", expectedSha256, hashString);
     return [hashString isEqualToString:expectedSha256.lowercaseString];
 }
 
