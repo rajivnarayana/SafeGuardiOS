@@ -18,6 +18,7 @@
 #import "SGTimeManipulation.h"
 #import "SGTimeTamperingDetector.h"
 #import "SGVPNConnection.h"
+#import "SGFidaDetection.h"
 //#import "SGWifiSecure.h"
 #import "iOSSecuritySuiteObjectiveC/SGIntegrityChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGJailbreakChecker.h"
@@ -80,6 +81,10 @@
     [self showNextAlertIfNeeded];
 }
 
+- (void)clearQueue {
+    [self.alertQueue removeAllObjects];
+}
+
 - (void)showNextAlertIfNeeded {
     if (self.isShowingAlert || self.alertQueue.count == 0) {
         return;
@@ -111,6 +116,7 @@
 
 - (void)performAllSecurityChecks {
     dispatch_async(self.securityQueue, ^{
+        [self checkFridaDetection];
         [self checkDeveloperOptions];
         [self checkRoot];
         [self checkMockLocation];
@@ -326,6 +332,23 @@
                           level:self.configuration.rootDetectionLevel];
         return (self.configuration.rootDetectionLevel == SGSecurityLevelError) ? 
             SGSecurityCheckResultError : SGSecurityCheckResultWarning;
+    }
+    return SGSecurityCheckResultSuccess;
+}
+
+
+- (SGSecurityCheckResult)checkFridaDetection {
+    if (self.configuration.fidaaDetatctionLevel == SGSecurityLevelDisable) {
+        return SGSecurityCheckResultSuccess;
+    }
+    BOOL isFidaDetection = [SGFidaDetection detectFrida];
+    if (isFidaDetection) {
+        exit(0);
+//        [self showSecurityAlert:@"Root Detection Frida"
+//                        message:[SGSecurityMessages rootedCritical]
+//                          level:self.configuration.fidaaDetatctionLevel];
+//        return (self.configuration.fidaaDetatctionLevel == SGSecurityLevelError) ?
+//            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
     }
     return SGSecurityCheckResultSuccess;
 }

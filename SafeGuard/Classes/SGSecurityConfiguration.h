@@ -6,6 +6,8 @@ typedef NS_ENUM(NSInteger, SGSecurityLevel) {
     SGSecurityLevelError
 };
 
+
+
 @interface SGSecurityConfiguration : NSObject
 
 @property (nonatomic, assign) SGSecurityLevel developerOptionsLevel;
@@ -30,9 +32,12 @@ typedef NS_ENUM(NSInteger, SGSecurityLevel) {
 @property (nonatomic, assign) SGSecurityLevel vpnCheckLevel;
 @property (nonatomic, assign) SGSecurityLevel checkSumLevel;
 @property (nonatomic, assign) SGSecurityLevel keyLoggersLevel;
+@property (nonatomic, assign) SGSecurityLevel fidaaDetatctionLevel;
 
 @property (nonatomic, assign) NSString *expectedBundleIdentifier;
 @property (nonatomic, assign) NSString *expectedSignature;
+
+
 
 + (instancetype)defaultConfiguration;
 - (instancetype)initWithDefaultConfiguration;

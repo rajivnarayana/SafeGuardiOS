@@ -17,7 +17,8 @@ typedef struct {
 } CheckResult;
 
 + (BOOL)amIJailbroken {
-    return ![self performChecks].passed;
+    bool checks = [self performChecks].passed;
+    return !checks;
 }
 
 + (NSDictionary<NSString *, id> *)amIJailbrokenWithFailMessage {
@@ -235,12 +236,12 @@ typedef struct {
         case SGFailedCheckRestrictedDirectoriesWriteable:
             return [self checkRestrictedDirectoriesWriteable];
         case SGFailedCheckFork:
-            if (![SGEmulatorChecker amIRunInEmulator]) {
+           // if ([SGEmulatorChecker amIRunInEmulator]) {
                 return [self checkFork];
-            } else {
-                NSLog(@"App run in the emulator, skipping the fork check.");
-                return (CheckResult){YES, @""};
-            }
+//            } else {
+//                NSLog(@"App run in the emulator, skipping the fork check.");
+//                return (CheckResult){YES, @""};
+//            }
         case SGFailedCheckSymbolicLinks:
             return [self checkSymbolicLinks];
         case SGFailedCheckDYLD:

@@ -45,6 +45,7 @@
         _vpnCheckLevel = SGSecurityLevelWarning;
         _checkSumLevel = SGSecurityLevelWarning;
         _keyLoggersLevel = SGSecurityLevelWarning;
+        _fidaaDetatctionLevel =  SGSecurityLevelWarning;
     }
     return self;
 }
