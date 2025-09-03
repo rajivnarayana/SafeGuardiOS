@@ -323,7 +323,9 @@
     if (self.configuration.rootDetectionLevel == SGSecurityLevelDisable) {
         return SGSecurityCheckResultSuccess;
     }
-    BOOL rootDetected =   [SGJailbreakChecker amIJailbroken];
+    BOOL rootDetected = [SGReverseEngineeringToolsChecker amIReverseEngineered];
+
+    //[SGJailbreakChecker amIJailbroken];
     if (rootDetected) {
         [self showSecurityAlert:@"Root Access" 
                         message:(self.configuration.rootDetectionLevel == SGSecurityLevelError ? 
