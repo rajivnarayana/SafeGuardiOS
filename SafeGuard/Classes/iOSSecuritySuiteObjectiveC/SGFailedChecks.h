@@ -12,6 +12,10 @@ typedef NS_ENUM(NSInteger, SGFailedCheckType) {
     SGFailedCheckDYLD,
     SGFailedCheckOpenedPorts,
     SGFailedCheckPSelectFlag,
+    SGFailedCheckFridaArtifacts,
+    SGFailedCheckMemoryIntegrity,
+    SGFailedCheckEnhancedForkCheck,
+    SGFailedCheckEnvironmentVariables,
     SGFailedCheckSuspiciousObjCClasses
 };
 
