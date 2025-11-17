@@ -19,7 +19,7 @@ jailbreak detection, and anti-tampering capabilities. Key features include:
   s.author           = { 'Rajiv Singaseni' => 'rajiv@webileapps.com' }
   s.source           = { :git => 'https://github.com/rajivnarayana/SafeGuardiOS.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '15.0'
   s.source_files = 'SafeGuard/Classes/**/*.{h,m}'
   s.resource_bundles = {
     'SGSecurityPrivacy' => ['SafeGuard/Resources/PrivacyInfo.xcprivacy'],
