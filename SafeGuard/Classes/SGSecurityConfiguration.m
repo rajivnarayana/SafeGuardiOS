@@ -46,6 +46,7 @@
         _checkSumLevel = SGSecurityLevelWarning;
         _keyLoggersLevel = SGSecurityLevelWarning;
         _fidaaDetatctionLevel =  SGSecurityLevelWarning;
+        _osVersionLevel = SGSecurityLevelError;
     }
     return self;
 }

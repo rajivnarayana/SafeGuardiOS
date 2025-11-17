@@ -33,6 +33,7 @@ typedef NS_ENUM(NSInteger, SGSecurityLevel) {
 @property (nonatomic, assign) SGSecurityLevel checkSumLevel;
 @property (nonatomic, assign) SGSecurityLevel keyLoggersLevel;
 @property (nonatomic, assign) SGSecurityLevel fidaaDetatctionLevel;
+@property (nonatomic, assign) SGSecurityLevel osVersionLevel;
 
 @property (nonatomic, copy) NSString *expectedBundleIdentifier;
 @property (nonatomic, copy) NSString *expectedSignature;

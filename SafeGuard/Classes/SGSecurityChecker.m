@@ -115,7 +115,18 @@
 #pragma mark - Security Checks
 
 - (void)performAllSecurityChecks {
+    
+    if (@available(iOS 15, *)) {
+        
+    } else {
+        // iOS earlier than 15: crash the app
+        @throw [NSException exceptionWithName:@"UnsupportedVersion"
+                                       reason:@"App requires iOS 15 or later"
+                                     userInfo:nil];
+    }
+
     dispatch_async(self.securityQueue, ^{
+        [self checkOSVersion];
         [self checkFridaDetection];
         [self checkDeveloperOptions];
         [self checkRoot];
@@ -338,6 +349,28 @@
     return SGSecurityCheckResultSuccess;
 }
 
+- (SGSecurityCheckResult)checkOSVersion {
+    if (self.configuration.osVersionLevel == SGSecurityLevelError) {
+        return SGSecurityCheckResultError;
+    }
+    
+    if (@available(iOS 15, *)) {
+        // iOS 15 or newer: do nothing
+        return SGSecurityCheckResultSuccess;
+    } else {
+        // iOS earlier than 15: crash the app
+        exit(0);
+        @throw [NSException exceptionWithName:@"UnsupportedVersion"
+                                       reason:@"App requires iOS 15 or later"
+                                     userInfo:nil];
+    
+    }
+
+   
+    return SGSecurityCheckResultSuccess;
+   
+}
+
 
 - (SGSecurityCheckResult)checkFridaDetection {
     if (self.configuration.fidaaDetatctionLevel == SGSecurityLevelDisable) {
@@ -346,11 +379,6 @@
     BOOL isFidaDetection = [SGFidaDetection detectFrida];
     if (isFidaDetection) {
         exit(0);
-//        [self showSecurityAlert:@"Root Detection Frida"
-//                        message:[SGSecurityMessages rootedCritical]
-//                          level:self.configuration.fidaaDetatctionLevel];
-//        return (self.configuration.fidaaDetatctionLevel == SGSecurityLevelError) ?
-//            SGSecurityCheckResultError : SGSecurityCheckResultWarning;
     }
     return SGSecurityCheckResultSuccess;
 }
