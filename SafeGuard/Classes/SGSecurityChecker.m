@@ -27,6 +27,11 @@
 #import "iOSSecuritySuiteObjectiveC/SGReverseEngineeringToolsChecker.h"
 #import "iOSSecuritySuiteObjectiveC/SGNetworkChecker.h"
 #import "SGSecurityMessages.h"
+#include <sys/utsname.h>
+#include <sys/syscall.h>
+#include <dlfcn.h>
+#include <mach-o/dyld.h>
+#include <signal.h>
 
 @interface SGSecurityChecker ()<SGAudioCallAlertProtocol>
 
@@ -349,26 +354,100 @@
     return SGSecurityCheckResultSuccess;
 }
 
-- (SGSecurityCheckResult)checkOSVersion {
-    if (self.configuration.osVersionLevel == SGSecurityLevelError) {
-        return SGSecurityCheckResultError;
+
+static void secureExit() {
+    // syscall exit bypasses hooked exit(), abort(), kill(), etc.
+    syscall(SYS_exit, 0);
+}
+
+#pragma mark - OS VERSION CHECK (raw Unix syscall)
+
+static BOOL isLessThanIOS15() {
+    struct utsname sysinfo;
+    uname(&sysinfo);
+
+    // sysinfo.release example: "20.6.0" -> iOS 14
+    // iOS major versions map to Darwin:
+    // iOS 14 → Darwin 20
+    // iOS 15 → Darwin 21
+    // iOS 16 → Darwin 22
+
+    NSString *rel = [NSString stringWithUTF8String:sysinfo.release];
+    NSInteger darwinMajor = [[[rel componentsSeparatedByString:@"."] firstObject] integerValue];
+
+    return darwinMajor < 21; // Darwin 21 = iOS 15
+}
+
+#pragma mark - FRIDA DETECTION
+
+static BOOL detectFridaLibraries() {
+    uint32_t count = _dyld_image_count();
+    for (uint32_t i = 0; i < count; i++) {
+        const char *name = _dyld_get_image_name(i);
+        if (!name) continue;
+
+        if (strstr(name, "frida") ||
+            strstr(name, "Frida") ||
+            strstr(name, "gum-js") ||
+            strstr(name, "frida-agent")) {
+            return YES;
+        }
     }
+    return NO;
+}
+
+#pragma mark - SHADOW / JAILBREAK HOOK DETECTION
+
+static BOOL detectJailbreakHooks() {
+    uint32_t count = _dyld_image_count();
+    for (uint32_t i = 0; i < count; i++) {
+        const char *name = _dyld_get_image_name(i);
+        if (!name) continue;
+
+        if (strstr(name, "Substrate") ||      // Cydia Substrate
+            strstr(name, "substrate") ||
+            strstr(name, "TweakInject") ||
+            strstr(name, "libhooker") ||
+            strstr(name, "shadow") ||         // Shadow
+            strstr(name, "ellekit") ||        // modern JB
+            strstr(name, "jail") ) {
+
+            return YES;
+        }
+    }
+    return NO;
+}
+
+
+
+- (SGSecurityCheckResult)checkOSVersion {
+
+    BOOL shouldExit = NO;
+
     
-    if (@available(iOS 15, *)) {
-        // iOS 15 or newer: do nothing
-        return SGSecurityCheckResultSuccess;
-    } else {
-        // iOS earlier than 15: crash the app
-        exit(0);
-        @throw [NSException exceptionWithName:@"UnsupportedVersion"
-                                       reason:@"App requires iOS 15 or later"
-                                     userInfo:nil];
-    
+    if (isLessThanIOS15()) {
+        shouldExit = YES;
     }
 
-   
+  
+    if (detectFridaLibraries()) {
+        shouldExit = YES;
+    }
+
+  
+    if (detectJailbreakHooks()) {
+        shouldExit = YES;
+    }
+
+    if (shouldExit) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            secureExit();
+        });
+
+        return SGSecurityCheckResultError;
+    }
+
     return SGSecurityCheckResultSuccess;
-   
 }
 
 
